@@ -1,13 +1,15 @@
 import { useState } from 'react';
-import { Loader, AlertTriangle, Bookmark, Clipboard, Mail, ChevronRight } from 'lucide-react';
+import { Loader, AlertTriangle, Bookmark, Clipboard, Mail, ChevronRight, ArrowLeft, Activity } from 'lucide-react';
 import SearchForm from './components/SearchForm';
 import TrialCard from './components/TrialCard';
 import TrialDetail from './components/TrialDetail';
 import Analytics from './components/Analytics';
 import { searchTrials } from './utils/api';
 import SmokeBackground from './components/SmokeBackground';
+import LandingPage from './components/LandingPage';
 
 export default function App() {
+  const [view, setView] = useState('landing');
   const [loading, setLoading] = useState(false);
   const [results, setResults] = useState(null);
   const [error, setError] = useState(null);
@@ -88,21 +90,29 @@ export default function App() {
 
   const displayList = tab === 'saved' ? savedList : (results || []);
 
+  if (view === 'landing') {
+    return <LandingPage onLaunchApp={() => setView('app')} />;
+  }
+
   return (
-    <div className="min-h-screen bg-[#080808] text-white relative">
+    <div className="min-h-screen bg-[#05050a] text-white relative">
       <SmokeBackground />
       <div className="relative z-10">
       {/* Header */}
-      <header className="border-b border-white/[0.06] bg-[#080808]/90 backdrop-blur-md sticky top-0 z-20">
+      <header className="border-b border-white/[0.06] bg-[#05050a]/90 backdrop-blur-md sticky top-0 z-20">
         <div className="max-w-4xl mx-auto px-6 py-4 flex items-center justify-between">
           <div className="flex items-center gap-3">
-            <div className="w-7 h-7 bg-white rounded-lg flex items-center justify-center shrink-0">
-              <svg width="14" height="14" viewBox="0 0 14 14" fill="none">
-                <path d="M7 1C3.686 1 1 3.686 1 7s2.686 6 6 6 6-2.686 6-6-2.686-6-6-6zm0 2a1.5 1.5 0 110 3 1.5 1.5 0 010-3zm0 8.5c-2 0-3.76-1.02-4.8-2.56C2.22 7.58 4.66 6.5 7 6.5c2.34 0 4.78 1.08 4.8 2.44C10.76 10.48 9 11.5 7 11.5z" fill="#000"/>
-              </svg>
+            <button
+              onClick={() => setView('landing')}
+              className="flex items-center gap-2 text-neutral-500 hover:text-white transition-colors text-xs mr-1"
+            >
+              <ArrowLeft className="w-3.5 h-3.5" />
+            </button>
+            <div className="w-7 h-7 rounded-lg bg-gradient-to-br from-violet-500 to-purple-700 flex items-center justify-center shrink-0">
+              <Activity className="w-3.5 h-3.5 text-white" />
             </div>
             <div>
-              <h1 className="font-semibold text-white text-sm leading-none">TrialMatch</h1>
+              <h1 className="font-semibold text-white text-sm leading-none">MedOS <span className="text-violet-400">AI</span> — Trial Matcher</h1>
               <p className="text-[10px] text-neutral-600 mt-0.5">Powered by ClinicalTrials.gov</p>
             </div>
           </div>
