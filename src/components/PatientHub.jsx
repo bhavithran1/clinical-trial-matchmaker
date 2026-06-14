@@ -4,6 +4,8 @@ import {
   Bell, Search, Plus, ChevronRight, Activity, Clock,
   CheckCircle, AlertCircle, Phone, Mail, X, User
 } from 'lucide-react';
+import { useTheme, dark, light } from '../context/ThemeContext';
+import ThemeToggle from './ThemeToggle';
 
 const MOCK_PATIENTS = [
   { id: 'P001', name: 'Siti Aminah binti Yusof', age: 52, ic: '720314-14-5821', phone: '+60 12-345 6789', dept: 'Cardiology', gp: 'Dr. Lim Wei Ming', nextAppt: '15 Jun 2026 2:30 PM', status: 'Active', conditions: ['Hypertension', 'T2DM'], lang: 'BM', followUp: 'Overdue', avatar: 'SA' },
@@ -56,6 +58,8 @@ function StatusBadge({ s }) {
 }
 
 export default function PatientHub({ onBack }) {
+  const { isDark } = useTheme();
+  const T = isDark ? dark : light;
   const [activeTab, setActiveTab] = useState('dashboard');
   const [search, setSearch] = useState('');
   const [selectedPatient, setSelectedPatient] = useState(null);
@@ -85,20 +89,20 @@ export default function PatientHub({ onBack }) {
   const avatarColors = ['from-violet-600 to-purple-700', 'from-blue-600 to-cyan-700', 'from-emerald-600 to-teal-700', 'from-rose-600 to-pink-700', 'from-amber-600 to-orange-700'];
 
   return (
-    <div className="min-h-screen text-white flex flex-col" style={{ background: '#030308' }}>
+    <div className="min-h-screen flex flex-col" style={{ background: T.bg, color: isDark ? '#fff' : '#0f0f1a' }}>
       {/* Grid bg */}
       <div className="fixed inset-0 pointer-events-none" style={{
-        backgroundImage: `linear-gradient(rgba(16,185,129,0.025) 1px, transparent 1px), linear-gradient(90deg, rgba(16,185,129,0.025) 1px, transparent 1px)`,
+        backgroundImage: `linear-gradient(${T.gridColor} 1px, transparent 1px), linear-gradient(90deg, ${T.gridColor} 1px, transparent 1px)`,
         backgroundSize: '60px 60px',
       }} />
       <div className="fixed bottom-0 left-0 pointer-events-none" style={{
         width: '60vw', height: '60vw', maxWidth: 800,
-        background: 'radial-gradient(circle, rgba(16,185,129,0.08) 0%, transparent 70%)',
+        background: `radial-gradient(circle, ${isDark ? 'rgba(16,185,129,0.08)' : 'rgba(16,185,129,0.05)'} 0%, transparent 70%)`,
         filter: 'blur(80px)', borderRadius: '50%',
       }} />
 
       {/* Header */}
-      <header className="sticky top-0 z-20 border-b border-white/[0.06]" style={{ background: 'rgba(3,3,8,0.9)', backdropFilter: 'blur(20px)' }}>
+      <header className="sticky top-0 z-20 border-b border-white/[0.06]" style={{ background: T.navBg, backdropFilter: 'blur(20px)' }}>
         <div className="max-w-7xl mx-auto px-6 py-4 flex items-center justify-between">
           <div className="flex items-center gap-3">
             <button onClick={onBack} className="text-neutral-500 hover:text-white transition-colors mr-1">
@@ -113,6 +117,7 @@ export default function PatientHub({ onBack }) {
             </div>
           </div>
           <div className="flex items-center gap-3">
+            <ThemeToggle />
             <button onClick={markAllRead} className="relative text-neutral-500 hover:text-white transition-colors p-2">
               <Bell className="w-4 h-4" />
               {unread > 0 && (
@@ -163,7 +168,7 @@ export default function PatientHub({ onBack }) {
                 { label: 'Follow-ups Due', value: '2', sub: 'this week', color: '#f59e0b', icon: Clock },
                 { label: 'Messages Unread', value: String(unread), sub: 'notifications', color: '#f87171', icon: Bell },
               ].map(k => (
-                <div key={k.label} className="rounded-2xl p-4" style={{ border: '1px solid rgba(255,255,255,0.06)', background: 'rgba(255,255,255,0.02)' }}>
+                <div key={k.label} className="rounded-2xl p-4" style={{ border: `1px solid ${T.border}`, background: T.cardBg }}>
                   <div className="flex items-center justify-between mb-3">
                     <p className="text-[11px] text-neutral-500">{k.label}</p>
                     <k.icon className="w-3.5 h-3.5 text-neutral-700" />
@@ -176,7 +181,7 @@ export default function PatientHub({ onBack }) {
 
             <div className="grid md:grid-cols-2 gap-6">
               {/* Today's schedule */}
-              <div className="rounded-2xl overflow-hidden" style={{ border: '1px solid rgba(255,255,255,0.06)', background: 'rgba(255,255,255,0.02)' }}>
+              <div className="rounded-2xl overflow-hidden" style={{ border: `1px solid ${T.border}`, background: T.cardBg }}>
                 <div className="px-5 py-4 border-b border-white/[0.06]">
                   <p className="text-sm font-bold text-white">Today's Schedule</p>
                 </div>
@@ -204,7 +209,7 @@ export default function PatientHub({ onBack }) {
               </div>
 
               {/* Notifications */}
-              <div className="rounded-2xl overflow-hidden" style={{ border: '1px solid rgba(255,255,255,0.06)', background: 'rgba(255,255,255,0.02)' }}>
+              <div className="rounded-2xl overflow-hidden" style={{ border: `1px solid ${T.border}`, background: T.cardBg }}>
                 <div className="px-5 py-4 border-b border-white/[0.06] flex items-center justify-between">
                   <p className="text-sm font-bold text-white">Notifications</p>
                   <button onClick={markAllRead} className="text-[11px] text-neutral-600 hover:text-white transition-colors">Mark all read</button>
@@ -239,7 +244,7 @@ export default function PatientHub({ onBack }) {
                 <input value={search} onChange={e => setSearch(e.target.value)}
                   placeholder="Search patients by name, ID, or department…"
                   className="w-full pl-9 pr-4 py-3 rounded-xl text-sm text-white placeholder-neutral-600 focus:outline-none transition-colors"
-                  style={{ background: 'rgba(255,255,255,0.04)', border: '1px solid rgba(255,255,255,0.08)' }}
+                  style={{ background: T.inputBg, border: `1px solid ${T.border}` }}
                 />
               </div>
               <p className="text-xs text-neutral-600 whitespace-nowrap">{filtered.length} patients</p>
@@ -248,7 +253,7 @@ export default function PatientHub({ onBack }) {
               {filtered.map((p, i) => (
                 <div key={p.id} onClick={() => setSelectedPatient(p)}
                   className="rounded-2xl p-5 cursor-pointer transition-all hover:border-white/15 group"
-                  style={{ border: '1px solid rgba(255,255,255,0.06)', background: 'rgba(255,255,255,0.02)' }}>
+                  style={{ border: `1px solid ${T.border}`, background: T.cardBg }}>
                   <div className="flex items-start gap-4">
                     <Avatar initials={p.avatar} color={avatarColors[i % avatarColors.length]} />
                     <div className="flex-1 min-w-0">
@@ -262,7 +267,7 @@ export default function PatientHub({ onBack }) {
                       <p className="text-xs text-neutral-500">{p.id} · Age {p.age} · {p.dept} · {p.lang}</p>
                       <div className="flex flex-wrap gap-1.5 mt-2">
                         {p.conditions.map(c => (
-                          <span key={c} className="text-[10px] px-2 py-0.5 rounded-full text-neutral-400" style={{ background: 'rgba(255,255,255,0.05)', border: '1px solid rgba(255,255,255,0.08)' }}>{c}</span>
+                          <span key={c} className="text-[10px] px-2 py-0.5 rounded-full text-neutral-400" style={{ background: T.inputBg, border: `1px solid ${T.border}` }}>{c}</span>
                         ))}
                       </div>
                     </div>
@@ -292,7 +297,7 @@ export default function PatientHub({ onBack }) {
                 <Plus className="w-4 h-4" /> Book Appointment
               </button>
             </div>
-            <div className="rounded-2xl overflow-hidden" style={{ border: '1px solid rgba(255,255,255,0.06)', background: 'rgba(255,255,255,0.02)' }}>
+            <div className="rounded-2xl overflow-hidden" style={{ border: `1px solid ${T.border}`, background: T.cardBg }}>
               {APPOINTMENTS.map((a, i) => (
                 <div key={i} className="flex items-center gap-5 px-6 py-4 border-b border-white/[0.04] last:border-0">
                   <div className="w-20 shrink-0">
@@ -329,7 +334,7 @@ export default function PatientHub({ onBack }) {
             <div className="space-y-3">
               {notifications.map(n => (
                 <div key={n.id} className={`rounded-2xl p-5 flex items-start gap-4 transition-all ${n.read ? 'opacity-60' : ''}`}
-                  style={{ border: `1px solid ${n.type === 'alert' ? 'rgba(239,68,68,0.2)' : n.type === 'success' ? 'rgba(16,185,129,0.2)' : 'rgba(255,255,255,0.06)'}`, background: 'rgba(255,255,255,0.02)' }}>
+                  style={{ border: `1px solid ${n.type === 'alert' ? 'rgba(239,68,68,0.2)' : n.type === 'success' ? 'rgba(16,185,129,0.2)' : T.border}`, background: T.cardBg }}>
                   <div className="w-9 h-9 rounded-xl flex items-center justify-center shrink-0" style={{
                     background: n.type === 'alert' ? 'rgba(239,68,68,0.15)' : n.type === 'success' ? 'rgba(16,185,129,0.15)' : 'rgba(59,130,246,0.15)',
                   }}>
@@ -356,8 +361,8 @@ export default function PatientHub({ onBack }) {
 
       {/* ── Patient Detail Modal ── */}
       {selectedPatient && (
-        <div className="fixed inset-0 z-50 flex items-center justify-center p-4" style={{ background: 'rgba(0,0,0,0.8)', backdropFilter: 'blur(20px)' }}>
-          <div className="w-full max-w-lg rounded-3xl p-6 max-h-[90vh] overflow-y-auto" style={{ background: '#0a0a14', border: '1px solid rgba(255,255,255,0.1)' }}>
+        <div className="fixed inset-0 z-50 flex items-center justify-center p-4" style={{ background: isDark ? 'rgba(0,0,0,0.8)' : 'rgba(0,0,0,0.5)', backdropFilter: 'blur(20px)' }}>
+          <div className="w-full max-w-lg rounded-3xl p-6 max-h-[90vh] overflow-y-auto" style={{ background: T.modalBg, border: `1px solid ${T.border}` }}>
             <div className="flex items-start justify-between mb-6">
               <div className="flex items-center gap-3">
                 <Avatar initials={selectedPatient.avatar} color={avatarColors[MOCK_PATIENTS.indexOf(selectedPatient) % avatarColors.length]} />
@@ -389,7 +394,7 @@ export default function PatientHub({ onBack }) {
                 <p className="text-xs text-neutral-500 mb-2">Active Conditions</p>
                 <div className="flex flex-wrap gap-2">
                   {selectedPatient.conditions.map(c => (
-                    <span key={c} className="text-xs px-3 py-1 rounded-full text-neutral-300" style={{ background: 'rgba(255,255,255,0.06)', border: '1px solid rgba(255,255,255,0.1)' }}>{c}</span>
+                    <span key={c} className="text-xs px-3 py-1 rounded-full text-neutral-300" style={{ background: T.codeBlock, border: `1px solid ${T.border}` }}>{c}</span>
                   ))}
                 </div>
               </div>
@@ -412,8 +417,8 @@ export default function PatientHub({ onBack }) {
 
       {/* ── New Appointment Modal ── */}
       {showNewAppt && (
-        <div className="fixed inset-0 z-50 flex items-center justify-center p-4" style={{ background: 'rgba(0,0,0,0.8)', backdropFilter: 'blur(20px)' }}>
-          <div className="w-full max-w-md rounded-3xl p-6" style={{ background: '#0a0a14', border: '1px solid rgba(255,255,255,0.1)' }}>
+        <div className="fixed inset-0 z-50 flex items-center justify-center p-4" style={{ background: isDark ? 'rgba(0,0,0,0.8)' : 'rgba(0,0,0,0.5)', backdropFilter: 'blur(20px)' }}>
+          <div className="w-full max-w-md rounded-3xl p-6" style={{ background: T.modalBg, border: `1px solid ${T.border}` }}>
             <div className="flex items-center justify-between mb-6">
               <h3 className="font-bold text-white text-lg">Book Appointment</h3>
               <button onClick={() => setShowNewAppt(false)} className="text-neutral-600 hover:text-white">
@@ -438,16 +443,16 @@ export default function PatientHub({ onBack }) {
                     <input type={f.type} required value={newApptForm[f.key]} placeholder={f.placeholder}
                       onChange={e => setNewApptForm(p => ({ ...p, [f.key]: e.target.value }))}
                       className="w-full px-4 py-3 rounded-xl text-sm text-white placeholder-neutral-700 focus:outline-none"
-                      style={{ background: 'rgba(255,255,255,0.05)', border: '1px solid rgba(255,255,255,0.08)' }} />
+                      style={{ background: T.inputBg, border: `1px solid ${T.border}` }} />
                   </div>
                 ))}
                 <div>
                   <label className="block text-[11px] font-semibold text-neutral-500 uppercase tracking-widest mb-1.5">Department</label>
                   <select value={newApptForm.dept} onChange={e => setNewApptForm(p => ({ ...p, dept: e.target.value }))}
                     className="w-full px-4 py-3 rounded-xl text-sm text-white focus:outline-none appearance-none"
-                    style={{ background: 'rgba(255,255,255,0.05)', border: '1px solid rgba(255,255,255,0.08)' }}>
+                    style={{ background: T.inputBg, border: `1px solid ${T.border}` }}>
                     {['Cardiology', 'Oncology', 'Nephrology', 'Endocrinology', 'General Medicine', 'Surgery'].map(d => (
-                      <option key={d} value={d} style={{ background: '#0a0a14' }}>{d}</option>
+                      <option key={d} value={d} style={{ background: T.modalBg }}>{d}</option>
                     ))}
                   </select>
                 </div>

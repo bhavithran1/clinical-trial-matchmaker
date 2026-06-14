@@ -1,5 +1,7 @@
 import { useState, useRef, useEffect } from 'react';
 import { Brain, Loader, AlertTriangle, CheckCircle, Copy, Download, ArrowLeft, Activity, Zap, FileText, Pill, Code2, MessageSquare } from 'lucide-react';
+import { useTheme, dark, light } from '../context/ThemeContext';
+import ThemeToggle from './ThemeToggle';
 
 const DRUG_INTERACTIONS = {
   metformin: [
@@ -166,6 +168,8 @@ Physician to countersign: ________________`;
 }
 
 export default function AICopilot({ onBack }) {
+  const { isDark } = useTheme();
+  const T = isDark ? dark : light;
   const [activeTemplate, setActiveTemplate] = useState('discharge');
   const [input, setInput] = useState('');
   const [output, setOutput] = useState(null);
@@ -197,21 +201,21 @@ export default function AICopilot({ onBack }) {
   }
 
   return (
-    <div className="min-h-screen text-white" style={{ background: '#030308' }}>
+    <div className="min-h-screen" style={{ background: T.bg, color: isDark ? '#fff' : '#0f0f1a' }}>
       {/* Grid bg */}
       <div className="fixed inset-0 pointer-events-none" style={{
-        backgroundImage: `linear-gradient(rgba(59,130,246,0.03) 1px, transparent 1px), linear-gradient(90deg, rgba(59,130,246,0.03) 1px, transparent 1px)`,
+        backgroundImage: `linear-gradient(${T.gridColor} 1px, transparent 1px), linear-gradient(90deg, ${T.gridColor} 1px, transparent 1px)`,
         backgroundSize: '60px 60px',
       }} />
       {/* Orb */}
       <div className="fixed top-0 right-0 pointer-events-none" style={{
         width: '60vw', height: '60vw', maxWidth: 800,
-        background: 'radial-gradient(circle, rgba(59,130,246,0.1) 0%, transparent 70%)',
+        background: `radial-gradient(circle, ${T.orb2} 0%, transparent 70%)`,
         filter: 'blur(80px)', borderRadius: '50%',
       }} />
 
       {/* Header */}
-      <header className="sticky top-0 z-20 border-b border-white/[0.06]" style={{ background: 'rgba(3,3,8,0.9)', backdropFilter: 'blur(20px)' }}>
+      <header className="sticky top-0 z-20 border-b border-white/[0.06]" style={{ background: T.navBg, backdropFilter: 'blur(20px)' }}>
         <div className="max-w-6xl mx-auto px-6 py-4 flex items-center justify-between">
           <div className="flex items-center gap-3">
             <button onClick={onBack} className="text-neutral-500 hover:text-white transition-colors mr-1">
@@ -225,9 +229,12 @@ export default function AICopilot({ onBack }) {
               <p className="text-[10px] text-neutral-600 mt-0.5">Clinical AI Assistant · Beta</p>
             </div>
           </div>
-          <div className="hidden md:flex items-center gap-2 text-[11px] text-neutral-500">
-            <span className="w-1.5 h-1.5 rounded-full bg-blue-400 animate-pulse" />
-            AI Model Active
+          <div className="flex items-center gap-3">
+            <div className="hidden md:flex items-center gap-2 text-[11px] text-neutral-500">
+              <span className="w-1.5 h-1.5 rounded-full bg-blue-400 animate-pulse" />
+              AI Model Active
+            </div>
+            <ThemeToggle />
           </div>
         </div>
       </header>
@@ -247,7 +254,7 @@ export default function AICopilot({ onBack }) {
               className="flex items-center gap-2 px-4 py-2.5 rounded-xl text-sm font-semibold transition-all border"
               style={activeTemplate === t.id
                 ? { background: 'rgba(59,130,246,0.2)', borderColor: 'rgba(59,130,246,0.5)', color: '#93c5fd' }
-                : { background: 'rgba(255,255,255,0.02)', borderColor: 'rgba(255,255,255,0.06)', color: '#6b7280' }}>
+                : { background: T.cardBg, borderColor: T.border, color: '#6b7280' }}>
               <t.icon className="w-3.5 h-3.5" />
               {t.label}
             </button>
@@ -257,7 +264,7 @@ export default function AICopilot({ onBack }) {
         <div className="grid md:grid-cols-2 gap-6">
           {/* Input */}
           <div className="space-y-4">
-            <div className="rounded-2xl overflow-hidden" style={{ border: '1px solid rgba(255,255,255,0.08)', background: 'rgba(255,255,255,0.02)' }}>
+            <div className="rounded-2xl overflow-hidden" style={{ border: `1px solid ${T.border}`, background: T.cardBg }}>
               <div className="px-4 py-3 border-b border-white/[0.06] flex items-center gap-2">
                 <template.icon className="w-3.5 h-3.5 text-neutral-500" />
                 <span className="text-xs font-semibold text-neutral-400">{template.label} · Input</span>
@@ -267,7 +274,7 @@ export default function AICopilot({ onBack }) {
                 onChange={e => setInput(e.target.value)}
                 placeholder={template.placeholder}
                 rows={14}
-                className="w-full px-4 py-4 text-sm text-neutral-300 placeholder-neutral-700 bg-transparent focus:outline-none resize-none font-mono leading-relaxed"
+                className="w-full px-4 py-4 text-sm placeholder-neutral-700 bg-transparent focus:outline-none resize-none font-mono leading-relaxed" style={{ color: isDark ? '#d1d5db' : '#374151' }}
               />
             </div>
             <button onClick={handleGenerate} disabled={loading || !input.trim()}
@@ -279,7 +286,7 @@ export default function AICopilot({ onBack }) {
           </div>
 
           {/* Output */}
-          <div className="rounded-2xl overflow-hidden" style={{ border: '1px solid rgba(255,255,255,0.08)', background: 'rgba(255,255,255,0.02)', minHeight: 400 }}>
+          <div className="rounded-2xl overflow-hidden" style={{ border: `1px solid ${T.border}`, background: T.cardBg, minHeight: 400 }}>
             <div className="px-4 py-3 border-b border-white/[0.06] flex items-center justify-between">
               <div className="flex items-center gap-2">
                 <CheckCircle className="w-3.5 h-3.5 text-neutral-500" />
@@ -316,7 +323,7 @@ export default function AICopilot({ onBack }) {
                       <span className="text-sm text-emerald-300">No significant interactions found</span>
                     </div>
                   ) : output.content.map((i, idx) => (
-                    <div key={idx} className="p-4 rounded-xl space-y-2" style={{ background: 'rgba(255,255,255,0.03)', border: '1px solid rgba(255,255,255,0.06)' }}>
+                    <div key={idx} className="p-4 rounded-xl space-y-2" style={{ background: T.codeBlock, border: `1px solid ${T.border}` }}>
                       <div className="flex items-center gap-2 flex-wrap">
                         <span className="text-sm font-semibold text-white capitalize">{i.drug1}</span>
                         <span className="text-neutral-600 text-xs">+</span>
@@ -331,7 +338,7 @@ export default function AICopilot({ onBack }) {
               {output?.type === 'icd' && (
                 <div className="space-y-2">
                   {output.content.map((c, idx) => (
-                    <div key={idx} className="flex items-start gap-3 p-3 rounded-xl" style={{ background: 'rgba(255,255,255,0.03)', border: '1px solid rgba(255,255,255,0.06)' }}>
+                    <div key={idx} className="flex items-start gap-3 p-3 rounded-xl" style={{ background: T.codeBlock, border: `1px solid ${T.border}` }}>
                       <span className="text-xs font-bold font-mono shrink-0 mt-0.5" style={{ color: '#60a5fa' }}>{c.code}</span>
                       <div>
                         <p className="text-xs text-white font-medium capitalize">{c.diagnosis}</p>
@@ -352,7 +359,7 @@ export default function AICopilot({ onBack }) {
             { label: 'ICD-10 accuracy', value: '94%', color: '#a78bfa' },
             { label: 'Drug alerts flagged today', value: '12', color: '#f87171' },
           ].map(s => (
-            <div key={s.label} className="rounded-xl p-4 text-center" style={{ border: '1px solid rgba(255,255,255,0.06)', background: 'rgba(255,255,255,0.02)' }}>
+            <div key={s.label} className="rounded-xl p-4 text-center" style={{ border: `1px solid ${T.border}`, background: T.cardBg }}>
               <p className="text-2xl font-black mb-1" style={{ color: s.color }}>{s.value}</p>
               <p className="text-[11px] text-neutral-500">{s.label}</p>
             </div>

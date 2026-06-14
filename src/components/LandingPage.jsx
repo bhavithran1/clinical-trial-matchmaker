@@ -4,6 +4,8 @@ import {
   Shield, Globe, ChevronRight, Building2, Lock,
   Clock, TrendingUp, BarChart2, Target, Zap, CheckCircle
 } from 'lucide-react';
+import { useTheme, dark, light } from '../context/ThemeContext';
+import ThemeToggle from './ThemeToggle';
 
 /* ─── Animated counter ─── */
 function Counter({ to, suffix = '', duration = 1800 }) {
@@ -31,9 +33,11 @@ function Counter({ to, suffix = '', duration = 1800 }) {
 
 /* ─── SVG Bar Chart ─── */
 function BarChart({ data, title, subtitle }) {
+  const { isDark } = useTheme();
+  const T = isDark ? dark : light;
   const max = Math.max(...data.map(d => d.value));
   return (
-    <div className="border border-white/[0.08] rounded-2xl p-5 bg-white/[0.03] backdrop-blur-sm">
+    <div className="rounded-2xl p-5 backdrop-blur-sm" style={{ border: `1px solid ${T.border}`, background: T.cardBg }}>
       <p className="text-xs font-semibold text-white mb-0.5">{title}</p>
       <p className="text-[11px] text-neutral-500 mb-5">{subtitle}</p>
       <div className="space-y-3">
@@ -61,15 +65,17 @@ function BarChart({ data, title, subtitle }) {
 
 /* ─── Donut Chart ─── */
 function DonutChart({ percentage, label, sublabel, color = '#7c3aed' }) {
+  const { isDark } = useTheme();
+  const T = isDark ? dark : light;
   const r = 42;
   const circ = 2 * Math.PI * r;
   const dash = (percentage / 100) * circ;
   return (
-    <div className="border border-white/[0.08] rounded-2xl p-5 bg-white/[0.03] backdrop-blur-sm flex flex-col items-center">
+    <div className="rounded-2xl p-5 backdrop-blur-sm flex flex-col items-center" style={{ border: `1px solid ${T.border}`, background: T.cardBg }}>
       <p className="text-xs font-semibold text-white mb-4 self-start">{label}</p>
       <div className="relative">
         <svg width="110" height="110" viewBox="0 0 110 110">
-          <circle cx="55" cy="55" r={r} fill="none" stroke="rgba(255,255,255,0.06)" strokeWidth="10" />
+          <circle cx="55" cy="55" r={r} fill="none" stroke={isDark ? 'rgba(255,255,255,0.06)' : 'rgba(0,0,0,0.08)'} strokeWidth="10" />
           <circle
             cx="55" cy="55" r={r} fill="none"
             stroke={color} strokeWidth="10"
@@ -90,6 +96,8 @@ function DonutChart({ percentage, label, sublabel, color = '#7c3aed' }) {
 
 /* ─── Sparkline ─── */
 function Sparkline({ data, color = '#7c3aed', label, value, trend }) {
+  const { isDark } = useTheme();
+  const T = isDark ? dark : light;
   const max = Math.max(...data), min = Math.min(...data);
   const w = 200, h = 60;
   const pts = data.map((v, i) => {
@@ -98,7 +106,7 @@ function Sparkline({ data, color = '#7c3aed', label, value, trend }) {
     return `${x},${y}`;
   }).join(' ');
   return (
-    <div className="border border-white/[0.08] rounded-2xl p-5 bg-white/[0.03] backdrop-blur-sm">
+    <div className="rounded-2xl p-5 backdrop-blur-sm" style={{ border: `1px solid ${T.border}`, background: T.cardBg }}>
       <p className="text-xs font-semibold text-white mb-0.5">{label}</p>
       <div className="flex items-end justify-between mb-3">
         <span className="text-2xl font-bold text-white">{value}</span>
@@ -173,6 +181,8 @@ const STEPS = [
 ];
 
 export default function LandingPage({ onLaunchApp, onLaunchCopilot, onLaunchHub }) {
+  const { isDark } = useTheme();
+  const T = isDark ? dark : light;
   const [scrolled, setScrolled] = useState(false);
   const [activeModule, setActiveModule] = useState(0);
   const [emailInput, setEmailInput] = useState('');
@@ -202,11 +212,11 @@ export default function LandingPage({ onLaunchApp, onLaunchCopilot, onLaunchHub 
   }
 
   return (
-    <div className="min-h-screen text-white overflow-x-hidden" style={{ background: '#030308' }}>
+    <div className="min-h-screen overflow-x-hidden" style={{ background: T.bg, color: isDark ? '#fff' : '#0f0f1a' }}>
 
       {/* Grid background */}
       <div className="fixed inset-0 pointer-events-none" style={{
-        backgroundImage: `linear-gradient(rgba(124,58,237,0.03) 1px, transparent 1px), linear-gradient(90deg, rgba(124,58,237,0.03) 1px, transparent 1px)`,
+        backgroundImage: `linear-gradient(${T.gridColor} 1px, transparent 1px), linear-gradient(90deg, ${T.gridColor} 1px, transparent 1px)`,
         backgroundSize: '60px 60px',
       }} />
 
@@ -216,7 +226,7 @@ export default function LandingPage({ onLaunchApp, onLaunchCopilot, onLaunchHub 
           top: '-30vh', left: '-10vw',
           width: '80vw', height: '80vw', maxWidth: 1000, maxHeight: 1000,
           borderRadius: '50%',
-          background: 'radial-gradient(circle, rgba(109,40,217,0.18) 0%, rgba(76,29,149,0.08) 40%, transparent 70%)',
+          background: `radial-gradient(circle, ${T.orb1} 0%, transparent 70%)`,
           filter: 'blur(80px)',
           animation: 'pulse 10s ease-in-out infinite',
         }} />
@@ -224,7 +234,7 @@ export default function LandingPage({ onLaunchApp, onLaunchCopilot, onLaunchHub 
           top: '40vh', right: '-20vw',
           width: '70vw', height: '70vw', maxWidth: 900, maxHeight: 900,
           borderRadius: '50%',
-          background: 'radial-gradient(circle, rgba(37,99,235,0.12) 0%, transparent 70%)',
+          background: `radial-gradient(circle, ${T.orb2} 0%, transparent 70%)`,
           filter: 'blur(80px)',
           animation: 'pulse 14s ease-in-out infinite 2s',
         }} />
@@ -232,15 +242,19 @@ export default function LandingPage({ onLaunchApp, onLaunchCopilot, onLaunchHub 
           bottom: '-10vh', left: '25vw',
           width: '60vw', height: '60vw', maxWidth: 800,
           borderRadius: '50%',
-          background: 'radial-gradient(circle, rgba(124,58,237,0.1) 0%, transparent 70%)',
+          background: `radial-gradient(circle, ${T.orb3} 0%, transparent 70%)`,
           filter: 'blur(100px)',
           animation: 'pulse 18s ease-in-out infinite 4s',
         }} />
       </div>
 
       {/* NAV */}
-      <nav className={`fixed top-0 inset-x-0 z-50 transition-all duration-500 ${scrolled ? 'border-b border-white/[0.06]' : ''}`}
-        style={{ background: scrolled ? 'rgba(3,3,8,0.85)' : 'transparent', backdropFilter: scrolled ? 'blur(20px)' : 'none' }}>
+      <nav className={`fixed top-0 inset-x-0 z-50 transition-all duration-500 ${scrolled ? 'border-b' : ''}`}
+        style={{
+          borderColor: T.border,
+          background: scrolled ? T.navBg : 'transparent',
+          backdropFilter: scrolled ? 'blur(20px)' : 'none',
+        }}>
         <div className="max-w-7xl mx-auto px-6 py-5 flex items-center justify-between">
           <div className="flex items-center gap-3">
             <div className="w-8 h-8 rounded-xl flex items-center justify-center"
@@ -258,6 +272,7 @@ export default function LandingPage({ onLaunchApp, onLaunchCopilot, onLaunchHub 
           </div>
 
           <div className="flex items-center gap-3">
+            <ThemeToggle />
             <button onClick={onLaunchApp}
               className="hidden md:block text-sm text-neutral-500 hover:text-white transition-colors px-4 py-2">
               Launch App
@@ -304,7 +319,7 @@ export default function LandingPage({ onLaunchApp, onLaunchCopilot, onLaunchHub 
             </a>
             <button onClick={onLaunchApp}
               className="inline-flex items-center gap-2 border border-white/10 hover:border-white/30 text-neutral-300 hover:text-white px-8 py-4 rounded-xl font-semibold text-sm transition-all"
-              style={{ background: 'rgba(255,255,255,0.03)' }}>
+              style={{ background: T.codeBlock }}>
               Try Trial Matcher <FlaskConical className="w-4 h-4" />
             </button>
           </div>
@@ -322,7 +337,7 @@ export default function LandingPage({ onLaunchApp, onLaunchCopilot, onLaunchHub 
       </section>
 
       {/* ── STATS ── */}
-      <section className="py-16 px-6" style={{ borderTop: '1px solid rgba(255,255,255,0.05)', borderBottom: '1px solid rgba(255,255,255,0.05)' }}>
+      <section className="py-16 px-6" style={{ borderTop: `1px solid ${T.divider}`, borderBottom: `1px solid ${T.divider}` }}>
         <div className="max-w-5xl mx-auto grid grid-cols-2 md:grid-cols-4 gap-8">
           {[
             { val: 50000, suf: '+', label: 'Active Trials Indexed', color: '#a78bfa' },
@@ -402,7 +417,7 @@ export default function LandingPage({ onLaunchApp, onLaunchCopilot, onLaunchHub 
       </section>
 
       {/* ── MODULES ── */}
-      <section id="products" className="py-24 px-6" style={{ borderTop: '1px solid rgba(255,255,255,0.05)' }}>
+      <section id="products" className="py-24 px-6" style={{ borderTop: `1px solid ${T.divider}` }}>
         <div className="max-w-7xl mx-auto">
           <div className="text-center mb-16">
             <p className="text-xs font-semibold uppercase tracking-widest mb-3" style={{ color: '#a78bfa' }}>Platform Modules</p>
@@ -416,7 +431,7 @@ export default function LandingPage({ onLaunchApp, onLaunchCopilot, onLaunchHub 
                 className="flex items-center gap-2 px-5 py-2.5 rounded-xl text-sm font-semibold transition-all border"
                 style={activeModule === i
                   ? { background: 'rgba(124,58,237,0.2)', borderColor: 'rgba(124,58,237,0.5)', color: '#c4b5fd' }
-                  : { background: 'rgba(255,255,255,0.02)', borderColor: 'rgba(255,255,255,0.06)', color: '#6b7280' }}>
+                  : { background: T.cardBg, borderColor: T.border, color: '#6b7280' }}>
                 <m.icon className="w-3.5 h-3.5" />
                 {m.title}
               </button>
@@ -453,7 +468,7 @@ export default function LandingPage({ onLaunchApp, onLaunchCopilot, onLaunchHub 
 
                   {/* Mock UI */}
                   <div className="border border-white/10 rounded-2xl p-6 space-y-3"
-                    style={{ background: 'rgba(0,0,0,0.5)', backdropFilter: 'blur(20px)' }}>
+                    style={{ background: isDark ? 'rgba(0,0,0,0.5)' : 'rgba(255,255,255,0.7)', backdropFilter: 'blur(20px)', border: `1px solid ${T.border}` }}>
                     {i === 0 && <>
                       <div className="text-[11px] text-neutral-600 font-mono mb-4">// Live Trial Matching — Breast Cancer</div>
                       {[
@@ -461,7 +476,7 @@ export default function LandingPage({ onLaunchApp, onLaunchCopilot, onLaunchHub 
                         { id: 'NCT04892341', title: 'Phase II TNBC Immunotherapy', match: '89%', status: 'Recruiting', color: '#10b981' },
                         { id: 'NCT05102847', title: 'Phase I CDK4/6 Inhibitor', match: '74%', status: 'Active', color: '#3b82f6' },
                       ].map(t => (
-                        <div key={t.id} className="flex items-center gap-3 p-3 rounded-xl" style={{ background: 'rgba(255,255,255,0.03)', border: '1px solid rgba(255,255,255,0.06)' }}>
+                        <div key={t.id} className="flex items-center gap-3 p-3 rounded-xl" style={{ background: T.codeBlock, border: `1px solid ${T.border}` }}>
                           <div className="w-2 h-2 rounded-full shrink-0" style={{ background: t.color, boxShadow: `0 0 8px ${t.color}` }} />
                           <div className="flex-1 min-w-0">
                             <p className="text-xs text-neutral-300 font-medium truncate">{t.title}</p>
@@ -474,7 +489,7 @@ export default function LandingPage({ onLaunchApp, onLaunchCopilot, onLaunchHub 
                     </>}
                     {i === 1 && <>
                       <div className="text-[11px] text-neutral-600 font-mono mb-4">// AI Copilot — Auto Draft</div>
-                      <div className="p-4 rounded-xl text-xs font-mono leading-relaxed" style={{ background: 'rgba(255,255,255,0.03)', border: '1px solid rgba(255,255,255,0.06)' }}>
+                      <div className="p-4 rounded-xl text-xs font-mono leading-relaxed" style={{ background: T.codeBlock, border: `1px solid ${T.border}` }}>
                         <span style={{ color: '#60a5fa' }}>Patient:</span><span className="text-neutral-300"> Ahmad bin Hassan, 54M</span><br/>
                         <span style={{ color: '#60a5fa' }}>Dx:</span><span className="text-neutral-300"> T2DM (E11.9), HTN (I10)</span><br/>
                         <span style={{ color: '#60a5fa' }}>Discharge Rx:</span><span className="text-neutral-300"> Metformin 500mg BD...</span><br/>
@@ -494,7 +509,7 @@ export default function LandingPage({ onLaunchApp, onLaunchCopilot, onLaunchHub 
                         { name: 'Lee Chong Wei', dept: 'Oncology', time: '4:00 PM', status: 'Follow-up', color: '#3b82f6' },
                         { name: 'Priya Ramasamy', dept: 'Endocrinology', time: '4:45 PM', status: 'New Patient', color: '#f59e0b' },
                       ].map((p, pi) => (
-                        <div key={pi} className="p-3 rounded-xl" style={{ background: 'rgba(255,255,255,0.03)', border: '1px solid rgba(255,255,255,0.06)' }}>
+                        <div key={pi} className="p-3 rounded-xl" style={{ background: T.codeBlock, border: `1px solid ${T.border}` }}>
                           <div className="flex items-center justify-between mb-1">
                             <span className="text-xs font-medium text-white">{p.name}</span>
                             <span className="text-[10px] font-medium px-2 py-0.5 rounded-full" style={{ background: `${p.color}20`, color: p.color }}>{p.status}</span>
@@ -514,7 +529,7 @@ export default function LandingPage({ onLaunchApp, onLaunchCopilot, onLaunchHub 
       </section>
 
       {/* ── HOW IT WORKS ── */}
-      <section id="how-it-works" className="py-24 px-6" style={{ borderTop: '1px solid rgba(255,255,255,0.05)' }}>
+      <section id="how-it-works" className="py-24 px-6" style={{ borderTop: `1px solid ${T.divider}` }}>
         <div className="max-w-5xl mx-auto">
           <div className="text-center mb-16">
             <p className="text-xs font-semibold uppercase tracking-widest mb-3" style={{ color: '#a78bfa' }}>Deployment</p>
@@ -524,7 +539,7 @@ export default function LandingPage({ onLaunchApp, onLaunchCopilot, onLaunchHub 
           <div className="grid md:grid-cols-3 gap-6">
             {STEPS.map(s => (
               <div key={s.num} className="rounded-2xl p-6 transition-all hover:border-violet-500/20 group"
-                style={{ border: '1px solid rgba(255,255,255,0.06)', background: 'rgba(255,255,255,0.02)' }}>
+                style={{ border: `1px solid ${T.border}`, background: T.cardBg }}>
                 <div className="text-5xl font-black font-mono mb-5" style={{ color: 'rgba(124,58,237,0.2)' }}>{s.num}</div>
                 <h3 className="font-bold text-white mb-2">{s.title}</h3>
                 <p className="text-sm text-neutral-500 leading-relaxed">{s.desc}</p>
@@ -535,7 +550,7 @@ export default function LandingPage({ onLaunchApp, onLaunchCopilot, onLaunchHub 
       </section>
 
       {/* ── TRUST ── */}
-      <section className="py-16 px-6" style={{ borderTop: '1px solid rgba(255,255,255,0.05)' }}>
+      <section className="py-16 px-6" style={{ borderTop: `1px solid ${T.divider}` }}>
         <div className="max-w-5xl mx-auto grid md:grid-cols-3 gap-6">
           {[
             { icon: Shield, title: 'PDPA Compliant', desc: "Fully compliant with Malaysia's Personal Data Protection Act 2010. All data stays in-country." },
@@ -581,7 +596,7 @@ export default function LandingPage({ onLaunchApp, onLaunchCopilot, onLaunchHub 
                   <input type="email" value={emailInput} onChange={e => setEmailInput(e.target.value)}
                     placeholder="your@hospital.com.my" required
                     className="flex-1 px-4 py-3 text-sm text-white placeholder-neutral-600 rounded-xl focus:outline-none transition-colors"
-                    style={{ background: 'rgba(255,255,255,0.05)', border: '1px solid rgba(255,255,255,0.08)' }}
+                    style={{ background: T.inputBg, border: `1px solid ${T.border}`, color: isDark ? '#fff' : '#0f0f1a' }}
                   />
                   <button type="submit"
                     className="text-white px-6 py-3 rounded-xl text-sm font-bold transition-all whitespace-nowrap"
@@ -597,7 +612,7 @@ export default function LandingPage({ onLaunchApp, onLaunchCopilot, onLaunchHub 
       </section>
 
       {/* FOOTER */}
-      <footer className="py-10 px-6" style={{ borderTop: '1px solid rgba(255,255,255,0.05)' }}>
+      <footer className="py-10 px-6" style={{ borderTop: `1px solid ${T.divider}` }}>
         <div className="max-w-7xl mx-auto flex flex-col md:flex-row items-center justify-between gap-4">
           <div className="flex items-center gap-2.5">
             <div className="w-6 h-6 rounded-lg flex items-center justify-center"
