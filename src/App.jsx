@@ -8,8 +8,12 @@ import { searchTrials } from './utils/api';
 import LandingPage from './components/LandingPage';
 import AICopilot from './components/AICopilot';
 import PatientHub from './components/PatientHub';
+import { ThemeProvider, useTheme, dark, light } from './context/ThemeContext';
+import ThemeToggle from './components/ThemeToggle';
 
-export default function App() {
+function AppInner() {
+  const { isDark } = useTheme();
+  const T = isDark ? dark : light;
   const [view, setView] = useState('landing');
   const [loading, setLoading] = useState(false);
   const [results, setResults] = useState(null);
@@ -102,27 +106,24 @@ export default function App() {
   if (view === 'hub') return <PatientHub onBack={() => setView('landing')} />;
 
   return (
-    <div className="min-h-screen text-white relative" style={{ background: '#030308' }}>
-      {/* Dark grid bg */}
+    <div className="min-h-screen relative" style={{ background: T.bg, color: isDark ? '#fff' : '#0f0f1a' }}>
+      {/* Grid bg */}
       <div className="fixed inset-0 pointer-events-none" style={{
-        backgroundImage: `linear-gradient(rgba(124,58,237,0.03) 1px, transparent 1px), linear-gradient(90deg, rgba(124,58,237,0.03) 1px, transparent 1px)`,
+        backgroundImage: `linear-gradient(${T.gridColor} 1px, transparent 1px), linear-gradient(90deg, ${T.gridColor} 1px, transparent 1px)`,
         backgroundSize: '60px 60px',
       }} />
       {/* Ambient orb */}
       <div className="fixed top-0 left-0 pointer-events-none" style={{
         width: '70vw', height: '70vw', maxWidth: 900,
-        background: 'radial-gradient(circle, rgba(124,58,237,0.08) 0%, transparent 70%)',
+        background: `radial-gradient(circle, ${T.orb1} 0%, transparent 70%)`,
         filter: 'blur(100px)', borderRadius: '50%',
       }} />
       <div className="relative z-10">
       {/* Header */}
-      <header className="border-b border-white/[0.06] sticky top-0 z-20" style={{ background: 'rgba(3,3,8,0.92)', backdropFilter: 'blur(20px)' }}>
+      <header className="border-b border-white/[0.06] sticky top-0 z-20" style={{ background: T.navBg, backdropFilter: 'blur(20px)' }}>
         <div className="max-w-4xl mx-auto px-6 py-4 flex items-center justify-between">
           <div className="flex items-center gap-3">
-            <button
-              onClick={() => setView('landing')}
-              className="flex items-center gap-2 text-neutral-500 hover:text-white transition-colors text-xs mr-1"
-            >
+            <button onClick={() => setView('landing')} className="text-neutral-500 hover:text-white transition-colors mr-1">
               <ArrowLeft className="w-3.5 h-3.5" />
             </button>
             <div className="w-7 h-7 rounded-lg bg-gradient-to-br from-violet-500 to-purple-700 flex items-center justify-center shrink-0">
@@ -133,14 +134,17 @@ export default function App() {
               <p className="text-[10px] text-neutral-600 mt-0.5">Powered by ClinicalTrials.gov</p>
             </div>
           </div>
-          {savedTrials.size > 0 && (
-            <button
-              onClick={() => setTab(tab === 'saved' ? 'results' : 'saved')}
-              className="text-xs flex items-center gap-1.5 text-neutral-400 hover:text-white border border-white/10 hover:border-white/30 px-3 py-1.5 rounded-lg transition-all"
-            >
-              <Bookmark className="w-3 h-3" fill="currentColor" /> {savedTrials.size} saved
-            </button>
-          )}
+          <div className="flex items-center gap-2">
+            {savedTrials.size > 0 && (
+              <button
+                onClick={() => setTab(tab === 'saved' ? 'results' : 'saved')}
+                className="text-xs flex items-center gap-1.5 text-neutral-400 hover:text-white border border-white/10 hover:border-white/30 px-3 py-1.5 rounded-lg transition-all"
+              >
+                <Bookmark className="w-3 h-3" fill="currentColor" /> {savedTrials.size} saved
+              </button>
+            )}
+            <ThemeToggle />
+          </div>
         </div>
       </header>
 
@@ -279,5 +283,13 @@ export default function App() {
       {selectedTrial && <TrialDetail trial={selectedTrial} onClose={() => setSelectedTrial(null)} />}
       </div>
     </div>
+  );
+}
+
+export default function App() {
+  return (
+    <ThemeProvider>
+      <AppInner />
+    </ThemeProvider>
   );
 }
