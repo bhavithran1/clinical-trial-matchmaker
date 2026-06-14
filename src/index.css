@@ -26,7 +26,15 @@ body {
 /* Select dropdown dark */
 select option { background: #1a1a1a; color: #fff; }
 
-/* ── Smoke background blobs ── */
+/* ── CSS smoke fallback ── */
+@keyframes cssDrift {
+  0%   { transform: translate(0,0) scale(1); }
+  33%  { transform: translate(3%,2%) scale(1.04); }
+  66%  { transform: translate(-2%,4%) scale(0.97); }
+  100% { transform: translate(0,0) scale(1); }
+}
+
+/* ── WebGL smoke background blobs (CSS fallback) ── */
 .smoke-blob {
   position: absolute;
   border-radius: 50%;
