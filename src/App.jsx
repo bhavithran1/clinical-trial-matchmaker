@@ -7,6 +7,8 @@ import Analytics from './components/Analytics';
 import { searchTrials } from './utils/api';
 import SmokeBackground from './components/SmokeBackground';
 import LandingPage from './components/LandingPage';
+import AICopilot from './components/AICopilot';
+import PatientHub from './components/PatientHub';
 
 export default function App() {
   const [view, setView] = useState('landing');
@@ -91,15 +93,31 @@ export default function App() {
   const displayList = tab === 'saved' ? savedList : (results || []);
 
   if (view === 'landing') {
-    return <LandingPage onLaunchApp={() => setView('app')} />;
+    return <LandingPage
+      onLaunchApp={() => setView('app')}
+      onLaunchCopilot={() => setView('copilot')}
+      onLaunchHub={() => setView('hub')}
+    />;
   }
+  if (view === 'copilot') return <AICopilot onBack={() => setView('landing')} />;
+  if (view === 'hub') return <PatientHub onBack={() => setView('landing')} />;
 
   return (
-    <div className="min-h-screen bg-[#05050a] text-white relative">
-      <SmokeBackground />
+    <div className="min-h-screen text-white relative" style={{ background: '#030308' }}>
+      {/* Dark grid bg */}
+      <div className="fixed inset-0 pointer-events-none" style={{
+        backgroundImage: `linear-gradient(rgba(124,58,237,0.03) 1px, transparent 1px), linear-gradient(90deg, rgba(124,58,237,0.03) 1px, transparent 1px)`,
+        backgroundSize: '60px 60px',
+      }} />
+      {/* Ambient orb */}
+      <div className="fixed top-0 left-0 pointer-events-none" style={{
+        width: '70vw', height: '70vw', maxWidth: 900,
+        background: 'radial-gradient(circle, rgba(124,58,237,0.08) 0%, transparent 70%)',
+        filter: 'blur(100px)', borderRadius: '50%',
+      }} />
       <div className="relative z-10">
       {/* Header */}
-      <header className="border-b border-white/[0.06] bg-[#05050a]/90 backdrop-blur-md sticky top-0 z-20">
+      <header className="border-b border-white/[0.06] sticky top-0 z-20" style={{ background: 'rgba(3,3,8,0.92)', backdropFilter: 'blur(20px)' }}>
         <div className="max-w-4xl mx-auto px-6 py-4 flex items-center justify-between">
           <div className="flex items-center gap-3">
             <button
