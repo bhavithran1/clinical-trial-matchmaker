@@ -8,15 +8,6 @@ export async function searchTrials({ query, condition, age, phase, status = 'REC
   params.set('filter.overallStatus', status);
   params.set('pageSize', pageSize);
   if (pageToken) params.set('pageToken', pageToken);
-  params.set('fields', [
-    'NCTId', 'BriefTitle', 'OfficialTitle', 'OverallStatus', 'Phase',
-    'Condition', 'BriefSummary', 'EligibilityCriteria', 'MinimumAge',
-    'MaximumAge', 'LocationCity', 'LocationState', 'LocationCountry',
-    'LeadSponsorName', 'StartDate', 'PrimaryCompletionDate', 'EnrollmentCount',
-    'StudyType', 'Intervention', 'ContactName', 'ContactPhone', 'ContactEMail',
-    'LastUpdatePostDate', 'HasExpandedAccess', 'HealthyVolunteers',
-  ].join('|'));
-
   const url = `${BASE}/studies?${params.toString()}`;
   const res = await fetch(url);
   if (!res.ok) throw new Error(`ClinicalTrials.gov API error: ${res.status}`);

@@ -69,7 +69,7 @@ export default function EligibilitySimplifier({ eligibilityCriteria }) {
     <div className="mt-3">
       <button
         onClick={() => setShow(s => !s)}
-        className="flex items-center gap-1.5 text-xs text-teal-600 dark:text-teal-400 hover:underline"
+        className="flex items-center gap-1.5 text-xs text-neutral-500 hover:text-white transition-colors"
       >
         <Wand2 className="w-3 h-3" />
         {show ? 'Hide' : 'Show'} simplified eligibility
@@ -80,10 +80,10 @@ export default function EligibilitySimplifier({ eligibilityCriteria }) {
         <div className="mt-2 space-y-3">
           {parsed.inclusion.length > 0 && (
             <div>
-              <p className="text-xs font-semibold text-green-700 dark:text-green-400 mb-1">Who may qualify (simplified):</p>
+              <p className="text-xs font-semibold text-emerald-400 mb-1">Who may qualify (simplified):</p>
               <ul className="space-y-1">
                 {parsed.inclusion.map((c, i) => (
-                  <li key={i} className="flex items-start gap-1.5 text-xs text-gray-700 dark:text-gray-300">
+                  <li key={i} className="flex items-start gap-1.5 text-xs text-neutral-400">
                     <span className="shrink-0 text-green-500 mt-0.5">✓</span> {c}
                   </li>
                 ))}
@@ -92,10 +92,10 @@ export default function EligibilitySimplifier({ eligibilityCriteria }) {
           )}
           {parsed.exclusion.length > 0 && (
             <div>
-              <p className="text-xs font-semibold text-red-600 dark:text-red-400 mb-1">Who may not qualify (simplified):</p>
+              <p className="text-xs font-semibold text-red-400 mb-1">Who may not qualify (simplified):</p>
               <ul className="space-y-1">
                 {parsed.exclusion.map((c, i) => (
-                  <li key={i} className="flex items-start gap-1.5 text-xs text-gray-700 dark:text-gray-300">
+                  <li key={i} className="flex items-start gap-1.5 text-xs text-neutral-400">
                     <span className="shrink-0 text-red-400 mt-0.5">✗</span> {c}
                   </li>
                 ))}
@@ -103,9 +103,9 @@ export default function EligibilitySimplifier({ eligibilityCriteria }) {
             </div>
           )}
           {!hasContent && (
-            <p className="text-xs text-gray-400">Could not parse eligibility criteria automatically.</p>
+            <p className="text-xs text-neutral-700">Could not parse eligibility criteria automatically.</p>
           )}
-          <p className="text-xs text-gray-400 italic">This is a simplified, automated summary. Always read the full criteria and consult your doctor.</p>
+          <p className="text-xs text-neutral-700 italic">This is a simplified, automated summary. Always read the full criteria and consult your doctor.</p>
         </div>
       )}
     </div>

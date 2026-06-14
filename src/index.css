@@ -1,1 +1,27 @@
 @import "tailwindcss";
+
+:root {
+  color-scheme: dark;
+}
+
+* {
+  box-sizing: border-box;
+}
+
+body {
+  background: #080808;
+  color: #fff;
+  font-family: -apple-system, BlinkMacSystemFont, 'Inter', 'Segoe UI', sans-serif;
+  -webkit-font-smoothing: antialiased;
+}
+
+/* Scrollbar */
+::-webkit-scrollbar { width: 4px; }
+::-webkit-scrollbar-track { background: transparent; }
+::-webkit-scrollbar-thumb { background: #333; border-radius: 4px; }
+
+/* Focus ring */
+*:focus-visible { outline: 1px solid rgba(255,255,255,0.3); outline-offset: 2px; }
+
+/* Select dropdown dark */
+select option { background: #1a1a1a; color: #fff; }
