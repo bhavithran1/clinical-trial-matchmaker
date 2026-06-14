@@ -5,7 +5,6 @@ import TrialCard from './components/TrialCard';
 import TrialDetail from './components/TrialDetail';
 import Analytics from './components/Analytics';
 import { searchTrials } from './utils/api';
-import SmokeBackground from './components/SmokeBackground';
 import LandingPage from './components/LandingPage';
 import AICopilot from './components/AICopilot';
 import PatientHub from './components/PatientHub';
