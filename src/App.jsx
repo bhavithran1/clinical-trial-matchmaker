@@ -5,6 +5,7 @@ import TrialCard from './components/TrialCard';
 import TrialDetail from './components/TrialDetail';
 import Analytics from './components/Analytics';
 import { searchTrials } from './utils/api';
+import SmokeBackground from './components/SmokeBackground';
 
 export default function App() {
   const [loading, setLoading] = useState(false);
@@ -88,7 +89,9 @@ export default function App() {
   const displayList = tab === 'saved' ? savedList : (results || []);
 
   return (
-    <div className="min-h-screen bg-[#080808] text-white">
+    <div className="min-h-screen bg-[#080808] text-white relative">
+      <SmokeBackground />
+      <div className="relative z-10">
       {/* Header */}
       <header className="border-b border-white/[0.06] bg-[#080808]/90 backdrop-blur-md sticky top-0 z-20">
         <div className="max-w-4xl mx-auto px-6 py-4 flex items-center justify-between">
@@ -247,6 +250,7 @@ export default function App() {
       </main>
 
       {selectedTrial && <TrialDetail trial={selectedTrial} onClose={() => setSelectedTrial(null)} />}
+      </div>
     </div>
   );
 }
