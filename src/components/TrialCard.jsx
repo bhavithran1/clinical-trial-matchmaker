@@ -1,5 +1,21 @@
-import { MapPin, Calendar, Users, ChevronRight, Phone, Mail, ExternalLink, Heart } from 'lucide-react';
-import { formatPhase, statusColor, parseAge } from '../utils/api';
+import { MapPin, Calendar, Users, ChevronRight, Phone, Mail, ExternalLink, Bookmark } from 'lucide-react';
+import { formatPhase, parseAge } from '../utils/api';
+
+function StatusPill({ status }) {
+  const map = {
+    RECRUITING: 'bg-emerald-500/10 text-emerald-400 border-emerald-500/20',
+    ACTIVE_NOT_RECRUITING: 'bg-blue-500/10 text-blue-400 border-blue-500/20',
+    COMPLETED: 'bg-white/5 text-neutral-500 border-white/10',
+    NOT_YET_RECRUITING: 'bg-amber-500/10 text-amber-400 border-amber-500/20',
+    TERMINATED: 'bg-red-500/10 text-red-400 border-red-500/20',
+  };
+  const cls = map[status] || 'bg-white/5 text-neutral-500 border-white/10';
+  return (
+    <span className={`text-[10px] px-2 py-0.5 rounded-full font-medium border ${cls}`}>
+      {status?.replace(/_/g, ' ') || 'Unknown'}
+    </span>
+  );
+}
 
 export default function TrialCard({ trial, onSelect, onSave, saved }) {
   const p = trial.protocolSection;
@@ -15,122 +31,111 @@ export default function TrialCard({ trial, onSelect, onSave, saved }) {
   const title = id?.briefTitle || 'Untitled Trial';
   const phase = formatPhase(design?.phases?.[0]);
   const overallStatus = status?.overallStatus;
-  const conditions = p?.conditionsModule?.conditions?.join(', ');
-  const summary = desc?.briefSummary?.slice(0, 200) + (desc?.briefSummary?.length > 200 ? '…' : '');
+  const conditions = p?.conditionsModule?.conditions?.slice(0, 2).join(', ');
+  const summary = desc?.briefSummary?.slice(0, 180) + (desc?.briefSummary?.length > 180 ? '…' : '');
   const minAge = eligibility?.minimumAge;
   const maxAge = eligibility?.maximumAge;
   const enrollment = design?.enrollmentInfo?.count;
   const startDate = status?.startDateStruct?.date;
-  const sponsor_name = sponsor?.leadSponsor?.name;
+  const sponsorName = sponsor?.leadSponsor?.name;
 
-  const locations = contacts?.locations?.slice(0, 3).map(l =>
+  const locations = contacts?.locations?.slice(0, 2).map(l =>
     [l.city, l.state, l.country].filter(Boolean).join(', ')
   ) || [];
 
-  const centralContacts = contacts?.centralContacts?.slice(0, 1) || [];
+  const contact = contacts?.centralContacts?.[0];
 
   return (
-    <div className="bg-white dark:bg-gray-800 rounded-xl border border-gray-200 dark:border-gray-700 p-5 hover:shadow-md transition-shadow">
+    <div className="group border border-white/10 rounded-2xl p-5 bg-white/[0.02] hover:bg-white/[0.05] hover:border-white/20 transition-all duration-200">
       <div className="flex items-start justify-between gap-3 mb-3">
         <div className="flex-1 min-w-0">
-          <div className="flex items-start gap-2 flex-wrap mb-1">
-            <span className={`text-xs px-2 py-0.5 rounded-full font-medium ${statusColor(overallStatus)}`}>
-              {overallStatus?.replace(/_/g, ' ') || 'Unknown'}
-            </span>
-            <span className="text-xs px-2 py-0.5 rounded-full bg-indigo-100 text-indigo-700 dark:bg-indigo-900/30 dark:text-indigo-400 font-medium">
+          <div className="flex items-center gap-2 flex-wrap mb-2">
+            <StatusPill status={overallStatus} />
+            <span className="text-[10px] px-2 py-0.5 rounded-full border border-white/10 text-neutral-400">
               {phase}
             </span>
           </div>
-          <h3 className="font-semibold text-gray-900 dark:text-gray-100 text-sm leading-tight">{title}</h3>
+          <h3 className="font-semibold text-white text-sm leading-snug">{title}</h3>
         </div>
-        <div className="flex items-center gap-1 shrink-0">
-          <button
-            onClick={() => onSave(nctId)}
-            className={`p-1.5 rounded-lg transition-colors ${saved ? 'text-red-500 bg-red-50 dark:bg-red-900/20' : 'text-gray-400 hover:text-red-500 hover:bg-red-50 dark:hover:bg-red-900/20'}`}
-            title={saved ? 'Remove from saved' : 'Save trial'}
-          >
-            <Heart className="w-4 h-4" fill={saved ? 'currentColor' : 'none'} />
-          </button>
-        </div>
+        <button
+          onClick={() => onSave(nctId)}
+          className={`p-1.5 rounded-lg transition-colors shrink-0 ${saved ? 'text-white bg-white/10' : 'text-neutral-600 hover:text-white hover:bg-white/5'}`}
+          title={saved ? 'Remove from saved' : 'Save trial'}
+        >
+          <Bookmark className="w-4 h-4" fill={saved ? 'currentColor' : 'none'} />
+        </button>
       </div>
 
       {conditions && (
-        <p className="text-xs text-teal-600 dark:text-teal-400 font-medium mb-2">{conditions}</p>
+        <p className="text-xs text-neutral-400 font-medium mb-2">{conditions}</p>
       )}
       {summary && (
-        <p className="text-xs text-gray-500 dark:text-gray-400 mb-3 leading-relaxed">{summary}</p>
+        <p className="text-xs text-neutral-600 mb-4 leading-relaxed">{summary}</p>
       )}
 
-      <div className="grid grid-cols-2 gap-2 mb-3">
+      <div className="flex flex-wrap gap-x-4 gap-y-1.5 mb-3">
         {(minAge || maxAge) && (
-          <div className="flex items-center gap-1 text-xs text-gray-500">
-            <Users className="w-3 h-3 shrink-0" />
-            <span>{minAge || '0'} – {maxAge || 'No limit'}</span>
+          <div className="flex items-center gap-1 text-xs text-neutral-600">
+            <Users className="w-3 h-3" />
+            {minAge || '0'} – {maxAge || 'any age'}
           </div>
         )}
         {enrollment && (
-          <div className="flex items-center gap-1 text-xs text-gray-500">
-            <Users className="w-3 h-3 shrink-0" />
-            <span>~{enrollment} participants</span>
+          <div className="flex items-center gap-1 text-xs text-neutral-600">
+            <Users className="w-3 h-3" />
+            ~{enrollment.toLocaleString()} participants
           </div>
         )}
         {startDate && (
-          <div className="flex items-center gap-1 text-xs text-gray-500">
-            <Calendar className="w-3 h-3 shrink-0" />
-            <span>Started {startDate}</span>
+          <div className="flex items-center gap-1 text-xs text-neutral-600">
+            <Calendar className="w-3 h-3" />
+            {startDate}
           </div>
         )}
-        {sponsor_name && (
-          <div className="flex items-center gap-1 text-xs text-gray-500 col-span-2 truncate">
-            <span className="truncate">{sponsor_name}</span>
-          </div>
+        {sponsorName && (
+          <div className="text-xs text-neutral-600 truncate max-w-[200px]">{sponsorName}</div>
         )}
       </div>
 
       {locations.length > 0 && (
-        <div className="mb-3">
-          {locations.map((loc, i) => (
-            <div key={i} className="flex items-center gap-1 text-xs text-gray-500">
-              <MapPin className="w-3 h-3 text-teal-500 shrink-0" />
-              {loc}
-            </div>
-          ))}
-        </div>
-      )}
-
-      {centralContacts.length > 0 && (
         <div className="mb-3 space-y-1">
-          {centralContacts.map((c, i) => (
-            <div key={i} className="flex flex-wrap gap-3 text-xs text-gray-500">
-              {c.phone && (
-                <a href={`tel:${c.phone}`} className="flex items-center gap-1 hover:text-teal-500">
-                  <Phone className="w-3 h-3" /> {c.phone}
-                </a>
-              )}
-              {c.email && (
-                <a href={`mailto:${c.email}`} className="flex items-center gap-1 hover:text-teal-500">
-                  <Mail className="w-3 h-3" /> {c.email}
-                </a>
-              )}
+          {locations.map((loc, i) => (
+            <div key={i} className="flex items-center gap-1 text-xs text-neutral-600">
+              <MapPin className="w-3 h-3 shrink-0" /> {loc}
             </div>
           ))}
         </div>
       )}
 
-      <div className="flex items-center justify-between pt-3 border-t border-gray-100 dark:border-gray-700">
-        <span className="text-xs text-gray-400 font-mono">{nctId}</span>
-        <div className="flex gap-2">
+      {contact && (
+        <div className="mb-3 flex flex-wrap gap-3 text-xs text-neutral-600">
+          {contact.phone && (
+            <a href={`tel:${contact.phone}`} className="flex items-center gap-1 hover:text-white transition-colors">
+              <Phone className="w-3 h-3" /> {contact.phone}
+            </a>
+          )}
+          {contact.email && (
+            <a href={`mailto:${contact.email}`} className="flex items-center gap-1 hover:text-white transition-colors">
+              <Mail className="w-3 h-3" /> {contact.email}
+            </a>
+          )}
+        </div>
+      )}
+
+      <div className="flex items-center justify-between pt-3 border-t border-white/[0.06]">
+        <span className="text-[10px] text-neutral-700 font-mono">{nctId}</span>
+        <div className="flex gap-3">
           <a
             href={`https://clinicaltrials.gov/study/${nctId}`}
             target="_blank"
             rel="noopener noreferrer"
-            className="text-xs text-teal-600 dark:text-teal-400 hover:underline flex items-center gap-1"
+            className="text-xs text-neutral-500 hover:text-white flex items-center gap-1 transition-colors"
           >
-            View on ClinicalTrials.gov <ExternalLink className="w-3 h-3" />
+            ClinicalTrials.gov <ExternalLink className="w-3 h-3" />
           </a>
           <button
             onClick={() => onSelect(trial)}
-            className="text-xs text-indigo-600 dark:text-indigo-400 hover:underline flex items-center gap-1"
+            className="text-xs text-white flex items-center gap-1 hover:opacity-70 transition-opacity"
           >
             Details <ChevronRight className="w-3 h-3" />
           </button>

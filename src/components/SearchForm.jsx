@@ -1,5 +1,5 @@
 import { useState } from 'react';
-import { Search, Loader, SlidersHorizontal, ChevronDown, ChevronUp } from 'lucide-react';
+import { Search, Loader, SlidersHorizontal } from 'lucide-react';
 
 const CONDITIONS = [
   'Breast Cancer', 'Lung Cancer', 'Leukemia', 'Lymphoma', 'Brain Tumor',
@@ -22,6 +22,9 @@ const STATUSES = [
   { value: 'COMPLETED', label: 'Completed' },
 ];
 
+const inputCls = 'w-full px-4 py-3 rounded-xl border border-white/10 bg-white/[0.05] text-white placeholder-neutral-600 text-sm focus:outline-none focus:border-white/30 transition-colors';
+const selectCls = 'w-full px-4 py-3 rounded-xl border border-white/10 bg-white/[0.05] text-white text-sm focus:outline-none focus:border-white/30 transition-colors appearance-none';
+
 export default function SearchForm({ onSearch, loading }) {
   const [condition, setCondition] = useState('');
   const [keywords, setKeywords] = useState('');
@@ -36,33 +39,31 @@ export default function SearchForm({ onSearch, loading }) {
   }
 
   return (
-    <div className="bg-white dark:bg-gray-800 rounded-2xl border border-gray-200 dark:border-gray-700 p-6 shadow-sm">
+    <div className="border border-white/10 rounded-2xl p-6 bg-white/[0.03]">
       <form onSubmit={handleSubmit} className="space-y-4">
         <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
           <div>
-            <label className="block text-xs font-medium text-gray-600 dark:text-gray-400 mb-1">Condition / Disease</label>
-            <div className="relative">
-              <input
-                type="text"
-                value={condition}
-                onChange={e => setCondition(e.target.value)}
-                placeholder="e.g., Breast Cancer, Leukemia…"
-                list="conditions-list"
-                className="w-full px-3 py-2.5 rounded-lg border border-gray-200 dark:border-gray-600 bg-white dark:bg-gray-700 text-gray-900 dark:text-gray-100 text-sm focus:outline-none focus:ring-2 focus:ring-teal-500"
-              />
-              <datalist id="conditions-list">
-                {CONDITIONS.map(c => <option key={c} value={c} />)}
-              </datalist>
-            </div>
+            <label className="block text-[11px] font-medium text-neutral-500 uppercase tracking-widest mb-2">Condition / Disease</label>
+            <input
+              type="text"
+              value={condition}
+              onChange={e => setCondition(e.target.value)}
+              placeholder="e.g., Breast Cancer, Leukemia…"
+              list="conditions-list"
+              className={inputCls}
+            />
+            <datalist id="conditions-list">
+              {CONDITIONS.map(c => <option key={c} value={c} />)}
+            </datalist>
           </div>
           <div>
-            <label className="block text-xs font-medium text-gray-600 dark:text-gray-400 mb-1">Keywords (optional)</label>
+            <label className="block text-[11px] font-medium text-neutral-500 uppercase tracking-widest mb-2">Keywords</label>
             <input
               type="text"
               value={keywords}
               onChange={e => setKeywords(e.target.value)}
               placeholder="e.g., immunotherapy, pediatric…"
-              className="w-full px-3 py-2.5 rounded-lg border border-gray-200 dark:border-gray-600 bg-white dark:bg-gray-700 text-gray-900 dark:text-gray-100 text-sm focus:outline-none focus:ring-2 focus:ring-teal-500"
+              className={inputCls}
             />
           </div>
         </div>
@@ -70,45 +71,35 @@ export default function SearchForm({ onSearch, loading }) {
         <button
           type="button"
           onClick={() => setShowAdvanced(!showAdvanced)}
-          className="text-xs text-teal-600 dark:text-teal-400 flex items-center gap-1 hover:underline"
+          className="text-xs text-neutral-500 hover:text-white flex items-center gap-1.5 transition-colors"
         >
           <SlidersHorizontal className="w-3 h-3" />
-          {showAdvanced ? 'Hide' : 'Show'} advanced filters
-          {showAdvanced ? <ChevronUp className="w-3 h-3" /> : <ChevronDown className="w-3 h-3" />}
+          {showAdvanced ? 'Hide' : 'Advanced'} filters
         </button>
 
         {showAdvanced && (
-          <div className="grid grid-cols-1 md:grid-cols-3 gap-4 pt-1">
+          <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
             <div>
-              <label className="block text-xs font-medium text-gray-600 dark:text-gray-400 mb-1">Status</label>
-              <select
-                value={status}
-                onChange={e => setStatus(e.target.value)}
-                className="w-full px-3 py-2.5 rounded-lg border border-gray-200 dark:border-gray-600 bg-white dark:bg-gray-700 text-gray-900 dark:text-gray-100 text-sm focus:outline-none focus:ring-2 focus:ring-teal-500"
-              >
+              <label className="block text-[11px] font-medium text-neutral-500 uppercase tracking-widest mb-2">Status</label>
+              <select value={status} onChange={e => setStatus(e.target.value)} className={selectCls}>
                 {STATUSES.map(s => <option key={s.value} value={s.value}>{s.label}</option>)}
               </select>
             </div>
             <div>
-              <label className="block text-xs font-medium text-gray-600 dark:text-gray-400 mb-1">Phase</label>
-              <select
-                value={phase}
-                onChange={e => setPhase(e.target.value)}
-                className="w-full px-3 py-2.5 rounded-lg border border-gray-200 dark:border-gray-600 bg-white dark:bg-gray-700 text-gray-900 dark:text-gray-100 text-sm focus:outline-none focus:ring-2 focus:ring-teal-500"
-              >
+              <label className="block text-[11px] font-medium text-neutral-500 uppercase tracking-widest mb-2">Phase</label>
+              <select value={phase} onChange={e => setPhase(e.target.value)} className={selectCls}>
                 {PHASES.map(p => <option key={p.value} value={p.value}>{p.label}</option>)}
               </select>
             </div>
             <div>
-              <label className="block text-xs font-medium text-gray-600 dark:text-gray-400 mb-1">Patient Age</label>
+              <label className="block text-[11px] font-medium text-neutral-500 uppercase tracking-widest mb-2">Patient Age</label>
               <input
                 type="number"
                 value={age}
                 onChange={e => setAge(e.target.value)}
                 placeholder="Age in years"
-                min={0}
-                max={120}
-                className="w-full px-3 py-2.5 rounded-lg border border-gray-200 dark:border-gray-600 bg-white dark:bg-gray-700 text-gray-900 dark:text-gray-100 text-sm focus:outline-none focus:ring-2 focus:ring-teal-500"
+                min={0} max={120}
+                className={inputCls}
               />
             </div>
           </div>
@@ -117,21 +108,20 @@ export default function SearchForm({ onSearch, loading }) {
         <button
           type="submit"
           disabled={loading || (!condition && !keywords)}
-          className="w-full py-3 bg-teal-600 hover:bg-teal-700 disabled:opacity-50 text-white rounded-xl font-semibold text-sm flex items-center justify-center gap-2 transition-colors"
+          className="w-full py-3.5 bg-white hover:bg-neutral-200 disabled:opacity-30 text-black rounded-xl font-semibold text-sm flex items-center justify-center gap-2 transition-colors"
         >
           {loading ? <Loader className="w-4 h-4 animate-spin" /> : <Search className="w-4 h-4" />}
           Find Clinical Trials
         </button>
       </form>
 
-      {/* Quick examples */}
-      <div className="mt-4 flex flex-wrap gap-2">
-        <span className="text-xs text-gray-400">Try:</span>
+      <div className="mt-4 flex flex-wrap gap-2 items-center">
+        <span className="text-[11px] text-neutral-600 uppercase tracking-widest">Try:</span>
         {['Pediatric Leukemia', 'Triple Negative Breast Cancer', 'Glioblastoma', 'CAR-T therapy'].map(ex => (
           <button
             key={ex}
             onClick={() => { setCondition(ex); onSearch({ condition: ex, status: 'RECRUITING' }); }}
-            className="text-xs px-2 py-1 bg-teal-50 dark:bg-teal-900/20 text-teal-600 dark:text-teal-400 rounded hover:bg-teal-100 transition-colors"
+            className="text-xs px-3 py-1 border border-white/10 text-neutral-400 rounded-lg hover:border-white/30 hover:text-white transition-colors"
           >
             {ex}
           </button>
